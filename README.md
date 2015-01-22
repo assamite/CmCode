@@ -1,3 +1,8 @@
+This is just a fork for ugly hack to make original saliency code to run in OSX (and other Unix).
+
+Following is the original README:
+----------------------------------------------------------------------------
+
 This solution contains source code from Ming-Ming Cheng's research projects.
 Please refer to the project page for more source code and research data: 
 http://mmcheng.net/
