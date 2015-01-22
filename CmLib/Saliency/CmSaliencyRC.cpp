@@ -1,5 +1,12 @@
-#include "StdAfx.h"
+//#include "StdAfx.h"
 #include "CmSaliencyRC.h"
+#include "opencv2/opencv.hpp"
+#include <stdio.h>
+
+#include "../Cluster/CmGMM.h"
+
+using namespace cv;
+using namespace std;
 
 const char* CmSaliencyRC::SAL_TYPE_DES[SAL_TYPE_NUM] = {
 	"RC", "HC", "FT", "LC", "SR"
@@ -9,6 +16,7 @@ const CmSaliencyRC::GET_SAL_FUNC CmSaliencyRC::gFuns[SAL_TYPE_NUM] = {
 	GetRC, GetHC, GetFT, GetLC, GetSR
 };
 
+/*
 void CmSaliencyRC::Get(CStr &imgNameW, CStr &salFileDir)
 {
 	vecS names; 
@@ -24,7 +32,8 @@ void CmSaliencyRC::Get(CStr &imgNameW, CStr &salFileDir)
 	for (int i = 0; i < imgNum; i++){
 		string name = names[i] + ext;
 		//printf("Processing %d/%dth image: %-20s\r", i, imgNum, name.c_str());
-		Mat sal, img3f = imread(inDir + name);
+		const string imagePath = inDir + name;
+		Mat sal, img3f = imread(imagePath, CV_LOAD_IMAGE_COLOR);
 		if (img3f.data == NULL){
 			printf("Can't load image %s, in %s:%d\n", name.c_str(), __FILE__, __LINE__);
 			CmFile::MkDir(salFileDir + "BadImage");
@@ -47,6 +56,7 @@ void CmSaliencyRC::Get(CStr &imgNameW, CStr &salFileDir)
 	//	timer[f].Report();
 	printf("Get saliency finished%-40s\n", "");
 }
+*/ 
 
 Mat CmSaliencyRC::Get(CMat &img3f, GET_SAL_FUNC fun, int _wkSize)
 {
@@ -60,6 +70,7 @@ Mat CmSaliencyRC::Get(CMat &img3f, GET_SAL_FUNC fun, int _wkSize)
 	return sal;
 }
 
+/*
 void CmSaliencyRC::Evaluate(CStr gtImgsW, CStr &salDir, CStr &resName)
 {
 	vecS des(SAL_TYPE_NUM);
@@ -67,7 +78,8 @@ void CmSaliencyRC::Evaluate(CStr gtImgsW, CStr &salDir, CStr &resName)
 		des[i] = SAL_TYPE_DES[i];
 	CmEvaluation::Evaluate(gtImgsW, salDir, resName, des);
 }
-
+*/
+ 
 Mat CmSaliencyRC::GetFT(CMat &img3f)
 {
 	CV_Assert(img3f.data != NULL && img3f.type() == CV_32FC3);
@@ -225,11 +237,11 @@ void CmSaliencyRC::GetHC(CMat &binColor3f, CMat &colorNums1i, Mat &_colorSal)
 	int binN = binColor3f.cols; 
 	_colorSal = Mat::zeros(1, binN, CV_32F);
 	float* colorSal = (float*)(_colorSal.data);
-	vector<vector<CostfIdx>> similar(binN); // Similar color: how similar and their index
+	vector <vector<CostfIdx> > similar(binN); // Similar color: how similar and their index
 	Vec3f* color = (Vec3f*)(binColor3f.data);
 	float *w = (float*)(weight1f.data);
 	for (int i = 0; i < binN; i++){
-		vector<CostfIdx> &similari = similar[i];
+		vector <CostfIdx> &similari = similar[i];
 		similari.push_back(make_pair(0.f, i));
 		for (int j = 0; j < binN; j++){
 			if (i == j)
@@ -244,13 +256,13 @@ void CmSaliencyRC::GetHC(CMat &binColor3f, CMat &colorNums1i, Mat &_colorSal)
 	SmoothSaliency(_colorSal, 0.25f, similar);
 }
 
-void CmSaliencyRC::SmoothSaliency(Mat &sal1f, float delta, const vector<vector<CostfIdx>> &similar)
+void CmSaliencyRC::SmoothSaliency(Mat &sal1f, float delta, const vector <vector <CostfIdx> > &similar)
 {
 	Mat colorNum1i = Mat::ones(sal1f.size(), CV_32SC1);
 	SmoothSaliency(colorNum1i, sal1f, delta, similar);
 }
 
-void CmSaliencyRC::SmoothSaliency(CMat &colorNum1i, Mat &sal1f, float delta, const vector<vector<CostfIdx>> &similar)
+void CmSaliencyRC::SmoothSaliency(CMat &colorNum1i, Mat &sal1f, float delta, const vector <vector <CostfIdx> > &similar)
 {
 	if (sal1f.cols < 2)
 		return;
@@ -258,10 +270,10 @@ void CmSaliencyRC::SmoothSaliency(CMat &colorNum1i, Mat &sal1f, float delta, con
 	CV_Assert(colorNum1i.size() == sal1f.size() && colorNum1i.type() == CV_32SC1);
 
 	int binN = sal1f.cols;
-	Mat newSal1d= Mat::zeros(1, binN, CV_64FC1);
-	float *sal = (float*)(sal1f.data);
-	double *newSal = (double*)(newSal1d.data);
-	int *pW = (int*)(colorNum1i.data);
+	Mat newSal1d = Mat::zeros(1, binN, CV_64FC1);
+	float * sal = (float*)(sal1f.data);
+	double * newSal = (double*)(newSal1d.data);
+	int * pW = (int*)(colorNum1i.data);
 
 	// Distance based smooth
 	int n = max(cvRound(binN * delta), 2);
@@ -314,15 +326,16 @@ void CmSaliencyRC::SmoothByHist(CMat &img3f, Mat &sal1f, float delta)
 		normalize(_colorSal, _colorSal, 0, 1, NORM_MINMAX, CV_32F);
 	}
 	// Find similar colors & Smooth saliency value for color bins
-	vector<vector<CostfIdx>> similar(binN); // Similar color: how similar and their index
+	vector <vector <CostfIdx> > similar(binN); // Similar color: how similar and their index
 	Vec3f* color = (Vec3f*)(binColor3f.data);
 	cvtColor(binColor3f, binColor3f, CV_BGR2Lab);
 	for (int i = 0; i < binN; i++){
-		vector<CostfIdx> &similari = similar[i];
+		vector <CostfIdx> &similari = similar[i];
 		similari.push_back(make_pair(0.f, i));
 		for (int j = 0; j < binN; j++)
 			if (i != j)
 				similari.push_back(make_pair(vecDist<float, 3>(color[i], color[j]), j));
+
 		sort(similari.begin(), similari.end());
 	}
 	cvtColor(binColor3f, binColor3f, CV_Lab2BGR);
@@ -382,7 +395,8 @@ void CmSaliencyRC::SmoothByGMMs(CMat &_img3f, Mat &_sal1f, int fGmmNum, int bGmm
 	CMat img3f = _img3f(rect);
 	Mat sal1f = _sal1f(rect); // constant input
 
-	CmGMM fGmm(fGmmNum), bGmm(bGmmNum);
+	CmGMM fGmm(fGmmNum);
+        CmGMM bGmm(bGmmNum);
 	Mat bComp1i, fComp1i;
 	fGmm.BuildGMMs(img3f, fComp1i, sal1f);
 	fGmm.RefineGMMs(img3f, fComp1i, sal1f);
@@ -403,6 +417,7 @@ void CmSaliencyRC::SmoothByGMMs(CMat &_img3f, Mat &_sal1f, int fGmmNum, int bGmm
 	sal1f.copyTo(_sal1f(rect));
 }
 
+/*
 int CmSaliencyRC::Demo(CStr wkDir)
 {
 	//if (argc != 2) {
@@ -427,6 +442,7 @@ int CmSaliencyRC::Demo(CStr wkDir)
 
 	return 0;
 }
+*/
 
 void CmSaliencyRC::BuildRegions(CMat& regIdx1i, vector<Region> &regs, CMat &colorIdx1i, int colorNum)
 {
@@ -523,11 +539,11 @@ int CmSaliencyRC::Quantize(CMat& img3f, Mat &idx1i, Mat &_color3f, Mat &_colorNu
 	int maxNum = 0;
 	{
 		int count = 0;
-		vector<pair<int, int>> num; // (num, color) pairs in num
+		vector < pair<int, int> > num; // (num, color) pairs in num
 		num.reserve(pallet.size());
 		for (map<int, int>::iterator it = pallet.begin(); it != pallet.end(); it++)
 			num.push_back(pair<int, int>(it->second, it->first)); // (color, num) pairs in pallet
-		sort(num.begin(), num.end(), std::greater<pair<int, int>>());
+		sort(num.begin(), num.end(), std::greater<pair<int, int> >());
 
 		maxNum = (int)num.size();
 		int maxDropNum = cvRound(rows * cols * (1-ratio));

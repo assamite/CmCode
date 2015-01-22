@@ -5,6 +5,12 @@
 /*	  based Salient Region Detection. IEEE CVPR, p. 409-416, 2011.		*/
 /************************************************************************/
 
+//#include "../CmLib.h"
+#include "CmSaliencyRC.h"
+#include "../Basic/CmDefinition.h"
+#include "../Basic/CmCv.h"
+#include "../Cluster/CmGMM.h"
+#include "../Segmentation/Maxflow/graph.h"
 
 class CmSalCut
 {
@@ -19,7 +25,8 @@ public: // Functions for saliency cut
 	static Mat CutObjs(CMat &img3f, CMat &sal1f, float t1 = 0.2f, float t2 = 0.9f, 
 		CMat &borderMask = Mat(), int wkSize = 20);
 
-	static int Demo(CStr imgNameW, CStr gtImgW, CStr salDir);
+	//static int Demo(CStr imgNameW, CStr gtImgW, CStr salDir);
+        static void Run(CStr ImagePath, CStr salMapPath, CStr salMaskPath);
 
 public: // Functions for GrabCut
 

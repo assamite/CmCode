@@ -4,7 +4,7 @@
 class CmTimer
 {
 public:	
-	CmTimer::CmTimer(CStr t = "Timer"):title(t) { is_started = false; start_clock = 0; cumulative_clock = 0; n_starts = 0; }
+	CmTimer(CStr t = "Timer"):title(t) { is_started = false; start_clock = 0; cumulative_clock = 0; n_starts = 0; }
 
 	~CmTimer(){	if (is_started) printf("CmTimer '%s' is started and is being destroyed.\n", title.c_str());	}
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "CmDefinition.h"
 
 Point const DIRECTION4[5] = {
 	Point(1,  0), //Direction 0: right
@@ -58,8 +58,8 @@ float const PI_HALF = PI_FLOAT * 0.5f;
 double const SQRT2 = sqrt(2.0);
 bool dbgStop = false;
 
-mt19937 randEng;
-uniform_int<int> randInt(0, 0x7fffffff);
+//mt19937 randEng;
+boost::uniform_int<int> randInt(0, 0x7fffffff);
 
 double dummyD;
 int dummyI;
@@ -75,6 +75,7 @@ void splitStr(CStr& str, CStr& delimiters , vector<string>& tokens)
 	}
 }
 
+/*
 wstring s2ws(const std::string& s)
 {
 	int len;
@@ -86,3 +87,4 @@ wstring s2ws(const std::string& s)
 	delete[] buf;
 	return r;
 }
+*/

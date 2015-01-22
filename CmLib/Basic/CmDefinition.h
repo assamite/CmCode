@@ -1,4 +1,38 @@
 #pragma once
+#pragma warning(disable: 4996)
+#pragma warning(disable: 4995)
+#pragma warning(disable: 4805)
+#pragma warning(disable: 4267)
+
+#include <stdio.h>
+#include <assert.h>
+#include "string.h"
+#include "../xstring.h"
+#include <map>
+#include <vector>
+#include <functional>
+#include <algorithm>
+#include <iostream>
+#include <exception>
+#include <cmath>
+#include <time.h>
+#include <set>
+#include <queue>
+#include <list>
+#include <limits>
+#include <fstream>
+#include <sstream>
+#include <sys/random.h>
+//#include <atlstr.h>
+//#include <atltypes.h>
+//#include <omp.h>
+#include <strstream>
+#include "boost/random/uniform_int.hpp"
+#include "opencv2/opencv.hpp"
+
+
+using namespace std;
+using namespace cv;
 
 #ifdef max
 #undef max
@@ -19,6 +53,8 @@ extern float const PI_HALF;
 extern double const SQRT2;
 extern double const CmEpsilon;
 
+typedef unsigned char byte;
+
 typedef vector<Point2d> PointSetd;
 typedef vector<Point2i> PointSeti;
 typedef const vector<Point2d> CPointSetd;
@@ -29,9 +65,9 @@ typedef vector<byte> vecB;
 typedef vector<float> vecF;
 typedef vector<double> vecD;
 typedef vector<Mat> vecM;
-typedef pair<double, int> CostIdx;
-typedef pair<float, int> CostfIdx;
-typedef pair<int, int> CostiIdx;
+typedef std::pair<double, int> CostIdx;
+typedef std::pair<float, int> CostfIdx;
+typedef std::pair<int, int> CostiIdx;
 typedef vector<CostIdx> CostIdxV;
 typedef vector<CostfIdx> CostfIdxV;
 typedef vector<CostiIdx> CostiIdxV;
@@ -48,8 +84,8 @@ typedef const vecD CvecD;
 typedef const vecM CvecM;
 typedef const vecS CvecS;
 
-extern mt19937 randEng;
-extern uniform_int<int> randInt;
+//extern mt19937 randEng;
+extern boost::uniform_int<int> randInt;
 
 extern double dummyD;
 extern int dummyI;
@@ -143,7 +179,7 @@ template<typename T> vector<T> operator *(const vector<T>& v1, T s)
 	return result;
 }
 
-template<class T> void maxSize(const vector<Point_<T>> &pnts, T &minS, T &maxS)
+template<class T> void maxSize(const vector<Point_<T> > &pnts, T &minS, T &maxS)
 {
 	CV_Assert(pnts.size() > 0);
 	minS = maxS = pnts[0].x;
@@ -177,7 +213,7 @@ template<typename T> inline bool lessThan(const Vec<T, 2> &v1, const Vec<T, 2> &
 #define charPointers2StrVec(arrayOfCharPointer) (vecS(arrayOfCharPointer, std::end(arrayOfCharPointer)))
 
 void splitStr(CStr& str, CStr& delimiters , vector<string>& tokens);
-wstring s2ws(const std::string& s);
+//wstring s2ws(const std::string& s);
 inline double MatMin(CMat &m) {double minVal; minMaxLoc(m, &minVal, NULL); return minVal; }
 inline double MatMax(CMat &m) {double maxVal; minMaxLoc(m, NULL, &maxVal); return maxVal; }
 

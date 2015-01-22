@@ -1,6 +1,13 @@
-#include "StdAfx.h"
-#include "CmSalCut.h"
+//#include "../CmLib.h"
 
+#include <string.h>
+#include "CmSalCut.h"
+#include "opencv2/opencv.hpp"
+#include "stdio.h"
+#include <iostream>
+
+using namespace cv;
+using namespace std;
 
 CmSalCut::CmSalCut(CMat &img3f)
 	:_fGMM(5), _bGMM(5), _w(img3f.cols), _h(img3f.rows), _lambda(50)
@@ -63,7 +70,7 @@ Mat CmSalCut::CutObjs(CMat &_img3f, CMat &_sal1f, float t1, float t2, CMat &_bor
 		int bW = cvRound(0.02 * _img3f.cols), bH = cvRound(0.02 * _img3f.rows);
 		border1u.create(_img3f.rows, _img3f.cols, CV_8U);
 		border1u = 255;
-		border1u(Rect(bW, bH, _img3f.cols - 2*bW, _img3f.rows - 2*bH)) = 0;
+		border1u(Rect(bW, bH, _img3f.cols - 2*bW, _img3f.rows - 2*bH)) = Scalar(0);
 	}
 	Mat sal1f, wkMask; 
 	_sal1f.copyTo(sal1f);
@@ -154,7 +161,7 @@ void CmSalCut::initialize(const Rect &rect)
 {
 	_trimap1i = TrimapBackground;
 	_trimap1i(rect) = TrimapUnknown;
-	_segVal1f = 0;
+	_segVal1f = Scalar(0);
 	_segVal1f(rect) = 1;
 }
 
@@ -263,7 +270,7 @@ Mat CmSalCut::showMedialResults(CStr& title)
 				(*segD) /= 2;
 		}
 	}
-	CmShow::SaveShow(_show3u, title);
+	//CmShow::SaveShow(_show3u, title);
 	return _show3u;
 }
 
@@ -283,6 +290,7 @@ int CmSalCut::ExpandMask(CMat &fMask, Mat &mask1u, CMat &bdReg1u, int expandRati
 	return changed;
 }
 
+/*
 int CmSalCut::Demo(CStr imgNameW, CStr gtImgW, CStr salDir)
 {
 	//if (argc != 5){
@@ -309,15 +317,20 @@ int CmSalCut::Demo(CStr imgNameW, CStr gtImgW, CStr salDir)
 #pragma omp parallel for 
 	for (int i = 0; i < imgNum; i++){
 		string name = names[i] + ext;
-		if (CmFile::FileExist(salDir + names[i] + "_RCC.png"))
-			continue;
+		//if (CmFile::FileExist(salDir + names[i] + "_RCC.png"))
+		//	continue;
 
-		printf("Processing %d/%dth image: %-70s\r", i, imgNum, _S(name));
-		Mat sal, img3f = imread(inDir + name);
-		CV_Assert_(img3f.data != NULL, ("Can't load image %s\n", _S(name)));
+		printf("Processing %d/%dth image: %s\n", i, imgNum, name);
+		Mat sal, img3f;
+		const Mat sal2;
+		const string inImagePath = inDir + name;
+		img3f = imread(inImagePath, CV_LOAD_IMAGE_COLOR);
+		CV_Assert(img3f.data != NULL);
 		img3f.convertTo(img3f, CV_32FC3, 1.0/255);
 		sal = CmSaliencyRC::GetRC(img3f);
-		imwrite(salDir + names[i] + "_RC.png", sal*255);
+		sal2 = sal * 255;
+		const string saliencyPathRC = salDir + + names[i] + "_RC.png";
+		imwrite(saliencyPathRC, sal2);
 
 		Mat cutMat;
 		float t = 0.9f;
@@ -328,10 +341,12 @@ int CmSalCut::Demo(CStr imgNameW, CStr gtImgW, CStr salDir)
 			cutMat = CmSalCut::CutObjs(img3f, sal, 0.1f, t);
 			t -= 0.2f;
 		}
-		if (!cutMat.empty())
-			imwrite(salDir + names[i] + "_RCC.png", cutMat);
+		if (!cutMat.empty()) {
+			const string saliencyPathRCC = salDir + names[i] + "_RCC.png";
+			imwrite(saliencyPathRCC, cutMat);
+		}
 		else
-			printf("Image(.jpg): %s", _S(names[i] + "\n"));
+			printf("Image(.jpg): %s", names[i] + "\n");
 	}
 	tm.Stop();
 	printf("Salient object detection and segmentation finished, %g seconds used per image\n", tm.TimeInSeconds()/imgNum);
@@ -341,4 +356,65 @@ int CmSalCut::Demo(CStr imgNameW, CStr gtImgW, CStr salDir)
 	//CmEvaluation::EvalueMask(gtImgW, salDir, "RCC", CmFile::GetFatherFolder(salDir) + "CutRes.m");
 	
 	return 0;
+}
+*/
+
+void CmSalCut::Run(CStr imagePath, CStr salMapPath, CStr salMaskPath) 
+{
+    Mat sal, img3f, sal2;
+    const string inImagePath = imagePath;
+    //cout << "Reading image" << endl;
+    img3f = imread(inImagePath, CV_LOAD_IMAGE_COLOR);
+    //cout << "Image read" << endl;
+    //CV_Assert(img3f.data != NULL);
+    img3f.convertTo(img3f, CV_32FC3, 1.0/255);
+    //cout << "Image converted" << endl;
+    sal = CmSaliencyRC::GetRC(img3f);
+    //cout << "RC read" << endl;
+    //cout << sal.cols << "," << sal.rows << "," << sal.channels() << endl;
+    sal2 = sal * 255;
+    //cout << "RC scalared" << endl;
+    imwrite(salMapPath, sal2);
+    //cout << "RC image written" << endl;
+
+    Mat cutMat;
+    float t = 0.9f;
+    int maxIt = 4;
+    GaussianBlur(sal, sal, Size(9, 9), 0);
+    normalize(sal, sal, 0, 1, NORM_MINMAX);
+    while (cutMat.empty() && maxIt--){
+            cutMat = CmSalCut::CutObjs(img3f, sal, 0.1f, t);
+            t -= 0.2f;
+    }
+    if (!cutMat.empty()) {
+            imwrite(salMaskPath, cutMat);
+    }
+
+}
+    
+extern "C" {
+    /**
+     * C style functions for python wrapper. Accepts only one picture.
+     */
+
+    /**
+     * Extract saliency from given image.
+     * 
+     * @param imagePath Image from which saliency is extracted
+     * @param salMapPath Full saliency map destination
+     * @param salMaskPath Binarized saliency map destination
+     * @return 1 if extraction is successful, 0 otherwise
+     */
+    int saliency(const char* imagePath, const char* salMapPath, const char* salMaskPath)
+    {
+        try
+        {
+            CmSalCut::Run(imagePath, salMapPath, salMaskPath);
+        }
+        catch (int e)
+        {
+            return 0;
+        }
+        return 1;
+    }
 }

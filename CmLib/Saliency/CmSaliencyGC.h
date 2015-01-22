@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../CmLib.h"
+
 /************************************************************************/
 /* For educational and research use only; commercial use are forbidden.	*/
 /* Download more source code from: http://mmcheng.net/					*/

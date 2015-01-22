@@ -426,7 +426,7 @@ template <int D> bool CmGMM_<D>::Save(CStr &name) const
 	int pre = fwrite("CmGMM", sizeof(char), 5, file);
 	int dataLen = sizeof(int) * 1 + sizeof(double) * 3;
 	CV_Assert(pre == 5 && fwrite(this, 1, dataLen, file) == dataLen);
-	CV_Assert(fwrite(_Guassians, sizeof(CmGaussian), _K, file) == _K);
+	CV_Assert(fwrite(_Guassians, sizeof(CmGaussian<D>), _K, file) == _K);
 	fclose(file);
 	return true;
 }
@@ -445,10 +445,10 @@ template <int D> bool CmGMM_<D>::Load(CStr &name)
 		return false;
 	}
 	int oldK = _K;
-	int L1 = sizeof(CmGMM_), L2 = sizeof(CmGaussian*);
+	int L1 = sizeof(CmGMM_), L2 = sizeof(CmGaussian<D>*);
 	int dataLen = sizeof(int) * 1 + sizeof(double) * 3;
 	CV_Assert(fread(this, 1, dataLen, file) == dataLen);
-	int g = fread(_Guassians, sizeof(CmGaussian), _K, file);
+	int g = fread(_Guassians, sizeof(CmGaussian<D>), _K, file);
 	CV_Assert(g == _K && oldK >= _K);
 	fclose(file);
 	return true;
@@ -473,6 +473,7 @@ template <int D> void CmGMM_<D>::GetProbs(CMat sampleDf, vector<Mat> &pci) const
 		divide(pci[c], pI, pci[c]); 
 }
 
+/*
 template <int D> void CmGMM_<D>::iluProbs(CMat sampleDf, CStr &nameNE) const
 {
 	vector<Mat> pci;
@@ -482,3 +483,4 @@ template <int D> void CmGMM_<D>::iluProbs(CMat sampleDf, CStr &nameNE) const
 	for (int i = _K; i < _MaxK; i++)
 		CmFile::WriteNullFile(nameNE + format("%d.nul", i));
 }
+*/

@@ -1,5 +1,8 @@
-#include "stdafx.h"
+#include "../CmLib.h"
 #include "CmSaliencyGC.h"
+#include "opencv2/opencv.hpp"
+
+using namespace cv;
 
 CmSaliencyGC::CmSaliencyGC(CMat &img3f, CStr &outName, bool GET_CSD)
 	:_gmm(DEFAULT_GMM_NUM), _img3f(img3f), _nameNE(outName), _GET_CSD(GET_CSD)
@@ -197,7 +200,7 @@ void CmSaliencyGC::GetGU(vecD& gc, vecD &d, double sigmaDist, double dominate)
 	Mat_<double> clrDist;
 	clrDist = Mat_<double>::zeros(_NUM, _NUM);
 	vector<Vec3f> gmmClrs(_NUM);
-	cvtColor(_gmmClrs, gmmClrs, CV_BGR2Lab);
+	cvtColor(_gmmClrs, gmmClrs, CV_BGR2Lab, 0);
 	vecD maxDist(_NUM);
 	for (int i = 0; i < _NUM; i++) for (int j = 0; j < i; j++){
 		double dCrnt = vecDist(gmmClrs[i], gmmClrs[j]);
@@ -266,6 +269,7 @@ Mat CmSaliencyGC::GetSalFromGMMs(vecD &val, bool bNormlize)
 
 // See my CVPR 11 paper http://mmcheng.net/SalObj/ for source code used to generate
 // nice statistical plots, many comparison figures and latex (see supplemental material).
+/*
 int CmSaliencyGC::Demo(CStr imgW, CStr salDir)
 {
 	CmFile::MkDir(salDir);
@@ -293,3 +297,4 @@ int CmSaliencyGC::Demo(CStr imgW, CStr salDir)
 	CmEvaluation::Evaluate(imgDir + "*.png", salDir, salDir + "Eval.m", des);
 	return 0;
 }
+*/

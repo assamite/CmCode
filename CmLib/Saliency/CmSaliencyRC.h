@@ -1,15 +1,21 @@
 #pragma once
 
+#include "../Basic/CmDefinition.h"
+#include "../Basic/CmCv.h"
+#include "../Segmentation/EfficientGraphBased/segment-image.h"
+
+using namespace cv;
+
 struct CmSaliencyRC
 {
 	typedef Mat (*GET_SAL_FUNC)(CMat &);
 
 	// Get saliency values of a group of images.
 	// Input image names and directory name for saving saliency maps.
-	static void Get(CStr &imgNameW, CStr &salDir);
+	//static void Get(CStr &imgNameW, CStr &salDir);
 
 	// Evaluate saliency detection methods. Input ground truth file names and saliency map directory
-	static void Evaluate(CStr gtW, CStr &salDir, CStr &resName);
+	//static void Evaluate(CStr gtW, CStr &salDir, CStr &resName);
 
 	// Frequency Tuned [1].
 	static Mat GetFT(CMat &img3f);
@@ -34,7 +40,7 @@ struct CmSaliencyRC
 	static void SmoothByRegion(Mat &sal1f, CMat &idx1i, int regNum, bool bNormalize = true);
 	static void SmoothByGMMs(CMat &img3f, Mat &sal1f, int fNum = 5, int bNum = 5, int wkSize = 0);
 
-	static int Demo(CStr wkDir);
+	//static int Demo(CStr wkDir);
 
 private:
 	static const int SAL_TYPE_NUM = 5; 
@@ -44,8 +50,8 @@ private:
 	// Histogram based Contrast
 	static void GetHC(CMat &binColor3f, CMat &colorNums1i, Mat &colorSaliency);
 
-	static void SmoothSaliency(Mat &sal1f, float delta, const vector<vector<CostfIdx>> &similar);
-	static void SmoothSaliency(CMat &colorNum1i, Mat &sal1f, float delta, const vector<vector<CostfIdx>> &similar);
+	static void SmoothSaliency(Mat &sal1f, float delta, const vector <vector <CostfIdx> > &similar);
+	static void SmoothSaliency(CMat &colorNum1i, Mat &sal1f, float delta, const vector <vector <CostfIdx> > &similar);
 
 	struct Region{
 		Region() { pixNum = 0; ad2c = Point2d(0, 0);}

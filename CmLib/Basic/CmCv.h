@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CmDefinition.h"
+
 enum{CV_FLIP_BOTH = -1, CV_FLIP_VERTICAL = 0, CV_FLIP_HORIZONTAL = 1};
 
 struct CmCv {
@@ -30,7 +32,7 @@ struct CmCv {
 	// as much as possible. unitLen must not be 0.
 	static inline Size NormalizeSize(const Size& sz, int shortLen, int unitLen = 1);
 	static inline void NormalizeImg(CMat&img, Mat& dstImg, int shortLen = 256, int unitLen = 8);
-	static void NormalizeImg(CStr &inDir, CStr &outDir, int minLen = 300, bool subFolders = true);
+	//static void NormalizeImg(CStr &inDir, CStr &outDir, int minLen = 300, bool subFolders = true);
 
 	// Get image region by two corner point.
 	static inline Rect GetImgRange(Point p1, Point p2, Size imgSz);
@@ -69,7 +71,7 @@ struct CmCv {
 	template<class T> static void PyrDownSample(CMat &src, Mat &dst);
 	template<class T> static void PyrUpSample(CMat &src, Mat &dst, Size dSz);
 
-	static void _inline SaveImgRGB(CStr &fName, CMat &img);// Saving RGB image for QImage data
+	static void inline SaveImgRGB(CStr &fName, CMat &img);// Saving RGB image for QImage data
 
 	static void Demo(const char* fileName = "H:\\Resize\\cd3.avi");
 

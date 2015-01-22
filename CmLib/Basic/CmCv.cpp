@@ -1,5 +1,6 @@
-#include "StdAfx.h"
 #include "CmCv.h"
+
+using namespace cv;
 
 
 /************************************************************************/
@@ -61,8 +62,14 @@ void CmCv::FFTShift(Mat& img)
 {
 	int w = img.cols / 2, h = img.rows / 2;
 	int cx2 = img.cols - w, cy2 = img.rows - h;
-	Swap(img(Rect(0, 0, w, h)), img(Rect(cx2, cy2, w, h)));  // swap 1, 3
-	Swap(img(Rect(cx2, 0, w, h)), img(Rect(0, cy2, w, h)));  // swap 2, 4
+        Mat r1 = img(Rect(0, 0, w, h));
+        Mat r2 = img(Rect(cx2, cy2, w, h));
+        Mat r3 = img(Rect(cx2, 0, w, h));
+        Mat r4 = img(Rect(0, cy2, w, h));
+	Swap(r1, r2);  // swap 1, 3
+        Swap(r3, r4);
+        //Swap(img(Rect(0, 0, w, h)), img(Rect(cx2, cy2, w, h)));  // swap 1, 3
+	//Swap(img(Rect(cx2, 0, w, h)), img(Rect(0, cy2, w, h)));  // swap 2, 4
 }
 
 /************************************************************************/
@@ -103,7 +110,7 @@ Rect CmCv::GetMaskRange(CMat &mask1u, int ext, int thresh)
 // index-counter pair (Number of pixels for each index), and label of each idx
 int CmCv::GetRegions(const Mat_<byte> &label1u, Mat_<int> &regIdx1i, vecI &idxCount, vecB &idxLabel, bool noZero)
 {
-	vector<pair<int, int>> counterIdx;
+	vector< pair<int, int> > counterIdx;
 	int _w = label1u.cols, _h = label1u.rows, maxIdx = -1;
 	regIdx1i.create(label1u.size());
 	regIdx1i = -1;
@@ -120,7 +127,7 @@ int CmCv::GetRegions(const Mat_<byte> &label1u, Mat_<int> &regIdx1i, vecI &idxCo
 			byte crntVal = label1u(y, x);
 			pair<int, int> counterReg(0, ++maxIdx); // Number of pixels in region with index maxIdx
 			Point pt(x, y);
-			queue<Point, list<Point>> neighbs;
+			queue <Point, list<Point> > neighbs;
 			regIdx[x] = maxIdx;
 			neighbs.push(pt);
 
@@ -143,7 +150,7 @@ int CmCv::GetRegions(const Mat_<byte> &label1u, Mat_<int> &regIdx1i, vecI &idxCo
 			labels.push_back(crntVal);
 		}
 	}
-	sort(counterIdx.begin(), counterIdx.end(), greater<pair<int, int>>());
+	sort(counterIdx.begin(), counterIdx.end(), greater <pair<int, int> >());
 	int idxNum = (int)counterIdx.size();
 	vector<int> newIdx(idxNum);
 	idxCount.resize(idxNum);
@@ -186,7 +193,7 @@ int CmCv::GetRegions(const Mat_<byte> &label1u, Mat_<int> &regIdx1i, vecI &idxCo
 // of each mat position) and sum of label values in each region
 int CmCv::GetNZRegions(const Mat_<byte> &label1u, Mat_<int> &regIdx1i, vecI &idxSum)
 {
-	vector<pair<int, int>> counterIdx;
+	vector <pair<int, int> > counterIdx;
 	int _w = label1u.cols, _h = label1u.rows, maxIdx = -1;
 	regIdx1i.create(label1u.size());
 	regIdx1i = -1;
@@ -200,7 +207,7 @@ int CmCv::GetNZRegions(const Mat_<byte> &label1u, Mat_<int> &regIdx1i, vecI &idx
 			
 			pair<int, int> counterReg(0, ++maxIdx); // Number of pixels in region with index maxIdx
 			Point pt(x, y);
-			queue<Point, list<Point>> neighbs;
+			queue <Point, list<Point> > neighbs;
 			regIdx[x] = maxIdx;
 			neighbs.push(pt);
 
@@ -241,7 +248,7 @@ int CmCv::GetNZRegions(const Mat_<byte> &label1u, Mat_<int> &regIdx1i, vecI &idx
 			counterIdx.push_back(counterReg);
 		}
 	}
-	sort(counterIdx.begin(), counterIdx.end(), greater<pair<int, int>>());
+	sort(counterIdx.begin(), counterIdx.end(), greater <pair<int, int> >());
 	int idxNum = (int)counterIdx.size();
 	vector<int> newIdx(idxNum);
 	idxSum.resize(idxNum);
@@ -341,7 +348,8 @@ Mat CmCv::GetBorderRegC(CMat &img3u, Mat &idx1i, vecI &idxCount)
 
 	erode(edg, edg, Mat(), Point(-1, -1), 2);
 	Mat_<int> idx1iT;
-	int regNum = CmCv::GetRegions(edg, idx1iT, idxCount, vecB(), true);
+        vector<byte> vB;
+	int regNum = CmCv::GetRegions(edg, idx1iT, idxCount, vB, true);
 	while(regNum > 1 && idxCount[regNum - 1] < 300)
 		regNum--;
 	Mat bdCMask = CmCv::GetBorderReg(idx1iT, regNum), ignoreMask;
@@ -439,7 +447,7 @@ void CmCv::fillPoly(Mat& img, const vector<PointSeti> _pnts, const Scalar& color
 	delete []num;
 	delete []pnts;
 }
- 
+ /*
 void CmCv::NormalizeImg(CStr &inDir, CStr &outDir, int minLen, bool subFolders)
 {
 	CmFile::MkDir(outDir);
@@ -463,12 +471,14 @@ void CmCv::NormalizeImg(CStr &inDir, CStr &outDir, int minLen, bool subFolders)
 			NormalizeImg(inDir + '/' + subFold[i], outDir + '/' + subFold[i], minLen, subFolders);
 	}
 }
+*/
 
 
 void CmCv::Demo(const char* fileName/* = "H:\\Resize\\cd3.avi"*/)
 {
 
 }
+                                                                  
 
 void CmCv::AddAlpha(CMat &fg3u, CMat &alpha1u, Mat &res3u)
 {
@@ -553,7 +563,9 @@ void CmCv::CannySimpleRGB(CMat &img3u, Mat &edge1u, double thresh1, double thres
 void CmCv::rubustifyBorderMask(Mat& mask1u)
 {
 	Mat_<int> regIdx1i;
-	int regNum = CmCv::GetRegions(mask1u, regIdx1i, vecI(), vecB(), true);
+        vector<int> vI;
+        vector<byte> vB;
+	int regNum = CmCv::GetRegions(mask1u, regIdx1i, vI, vB, true);
 	mask1u = CmCv::GetBorderReg(regIdx1i, regNum, 0.02, 0.5);
 }
 
@@ -596,7 +608,7 @@ Mat CmCv::getGrabMask(CMat &img3u, Rect rect)
 
 	Mat mask1u(img3u.size(), CV_8U);
 	memset(mask1u.data, 255, mask1u.step.p[0]*mask1u.rows);
-	mask1u(rect) = 0;
+	mask1u(rect) = Scalar(0);
 
 	Mat edge1u;
 	CmCv::CannySimpleRGB(img3u, edge1u, 120, 1200, 5);
@@ -615,7 +627,8 @@ Mat CmCv::getGrabMask(CMat &img3u, Rect rect)
 				mask1u.at<byte>(nbrPnt) = 255, selectedPnts.push(nbrPnt);
 		}
 	}
-	rubustifyBorderMask(mask1u(Rect(rect.x+1, rect.y+1, rect.width-2, rect.height-2)));
+        Mat tempMask = mask1u(Rect(rect.x+1, rect.y+1, rect.width-2, rect.height-2));
+	rubustifyBorderMask(tempMask);
 	return mask1u;
 }
 

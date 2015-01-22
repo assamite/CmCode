@@ -1,3 +1,13 @@
+.project
+.cproject
+.pyproject
+.pydevproject
+.settings/
+nbproject/
+
+*.o
+*.so
+
 # git ignore file
 
 Lib/

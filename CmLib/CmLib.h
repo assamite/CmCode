@@ -4,10 +4,10 @@
 #pragma warning(disable: 4805)
 #pragma warning(disable: 4267)
 
-
+#include <stdio.h>
 #include <assert.h>
-#include <string>
-#include <xstring>
+#include "string.h"
+#include "xstring.h"
 #include <map>
 #include <vector>
 #include <functional>
@@ -22,10 +22,10 @@
 #include <limits>
 #include <fstream>
 #include <sstream>
-#include <random>
-#include <atlstr.h>
-#include <atltypes.h>
-#include <omp.h>
+#include <sys/random.h>
+//#include <atlstr.h>
+//#include <atltypes.h>
+//#include <omp.h>
 #include <strstream>
 using namespace std;
 
@@ -47,6 +47,10 @@ using namespace std;
 #pragma comment( lib, cvLIB("highgui"))
 #pragma comment(lib, cvLIB("contrib"))
 using namespace cv;
+
+typedef unsigned char byte;
+typedef bool BOOL;
+
 
 
 // CmLib Basic coding help

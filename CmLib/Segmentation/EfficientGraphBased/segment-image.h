@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 #ifndef SEGMENT_IMAGE
 #define SEGMENT_IMAGE
-
+#include "../../Basic/CmDefinition.h"
 
 /*
 * Segment an image
@@ -42,6 +42,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 int SegmentImage(CMat &_src3f, Mat &pImgInd, double sigma = 0.5, double k = 200, int min_size = 50);
 
 
-void SegmentImageDemo(CStr& inImgW, CStr& outDir, double sigma, double k, int min_size);
+//void SegmentImageDemo(CStr& inImgW, CStr& outDir, double sigma, double k, int min_size);
 
 #endif

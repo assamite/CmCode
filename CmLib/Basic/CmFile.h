@@ -45,7 +45,7 @@ struct CmFile
 	static int GetSubFolders(CStr& folder, vecS& subFolders);
 	static string GetFatherFolder(CStr &folder) {return GetFolder(folder.substr(0, folder.size() - 1));}
 
-	inline static BOOL Copy(CStr &src, CStr &dst, BOOL failIfExist = FALSE);
+	inline static BOOL Copy(CStr &src, CStr &dst, BOOL failIfExist = false);
 	inline static BOOL Move(CStr &src, CStr &dst, DWORD dwFlags = MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED | MOVEFILE_WRITE_THROUGH);
 	static BOOL Move2Dir(CStr &srcW, CStr dstDir);
 	static BOOL Copy2Dir(CStr &srcW, CStr dstDir);
@@ -77,7 +77,7 @@ struct CmFile
 
 	// Needs 7-Zip to be installed and 7z.exe to be put under available path. compressLevel = 9 gives maximal compression
 	static void ZipFiles(CStr &filesW, CStr &zipFileName, int compressLevel = 0);
-	static void CmFile::UnZipFiles(CStr &zipFileName, CStr &tgtDir, bool overwriteWarning = true);
+	static void UnZipFiles(CStr &zipFileName, CStr &tgtDir, bool overwriteWarning = true);
 };
 
 /************************************************************************/

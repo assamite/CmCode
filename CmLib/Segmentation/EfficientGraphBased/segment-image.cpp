@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "segment-graph.h"
 #include "segment-image.h"
 
@@ -102,6 +101,7 @@ int SegmentImage(CMat &_src3f, Mat &pImgInd, double sigma, double c, int min_siz
 	return idxNum;
 }
 
+/*
 void SegmentImageDemo(CStr& inImgW, CStr& outDir, double sigma, double k, int min_size)
 {
 	vecS names;
@@ -120,3 +120,4 @@ void SegmentImageDemo(CStr& inImgW, CStr& outDir, double sigma, double k, int mi
 	}
 	printf("%-40s\r", "");
 }
+*/
