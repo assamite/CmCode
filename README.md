@@ -1,5 +1,18 @@
 This is just a fork for ugly hack to make original saliency code to run in OSX (and other Unix).
 
+Compiling ``saliency.so``:
+
+* Make sure you have [opencv2](http://opencv.org/) installed
+* Copy opencv libraries commands from output of
+
+  ```
+  $> pkg-config --libs opencv
+  ```
+
+* Modify (if needed) ``OPENCV_LIBS`` in ``project_root/CmLib/Saliency/makefile`` with your opencv libs
+
+* Run either ``make shared_unix`` or ``make shared_osx`` depending on your system
+
 Following is the original README:
 ----------------------------------------------------------------------------
 
