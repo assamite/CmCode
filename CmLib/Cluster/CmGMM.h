@@ -104,7 +104,7 @@ public:
 	CmGaussianFitter() {Reset();}
 
 	// Add a color sample
-	template<typename T> __forceinline void Add(const T* _c);
+	template<typename T> inline void Add(const T* _c);
 
 	template<typename T> inline void Add(const T* _c, T _weight);
 
