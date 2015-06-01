@@ -22,7 +22,7 @@
 #include <limits>
 #include <fstream>
 #include <sstream>
-#include <sys/random.h>
+//#include <sys/random.h>
 //#include <atlstr.h>
 //#include <atltypes.h>
 //#include <omp.h>
